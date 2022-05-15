@@ -8,14 +8,14 @@ make sure all hard drives are wiped while you're in rescue mode or before you ge
 ssh into server and run command: installimage
 
 ## base install image config for all servers: 
-**DRIVE1 /dev/nvme0n0
-DRIVE2 /dev/nvme01n1
-SWRAID 1
-SWRAIDLEVEL 1
-HOSTNAME CEPH0#
-PART swap swap 6G
-PART /boot ext3 4G
-PART / btrfs all
+**DRIVE1 /dev/nvme0n0<br>
+DRIVE2 /dev/nvme01n1<br>
+SWRAID 1<br>
+SWRAIDLEVEL 1<br>
+HOSTNAME CEPH0#<br>
+PART swap swap 6G<br>
+PART /boot ext3 4G<br>
+PART / btrfs all<br>
 IMAGE** (this line will remain the same from what OS you selected in installimage) (ubuntu jammy)
 
 hit F10 and install
