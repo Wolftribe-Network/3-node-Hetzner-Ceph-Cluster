@@ -32,25 +32,7 @@ once everything is done and verified, restart the system
 ## First Boot
 execute the script provided on each server, the script will handle everything up until the next step
 
-Installation of CEPH-ADM
-ensure curl is installed using which curl if it doesn't show a response, install it using sudo apt install -y curl
-
-install ceph adm using the following commands:
-
-curl --silent --remote-name --location https://github.com/ceph/ceph/raw/pacific/src/cephadm/cephadm
-**chmod +x cephadm
-sudo ./cephadm add-repo --release pacific**
-
-don't be alarmed by the error after this command, it's a feature not a bug
-
-once you update, I have found that it doesn't update properly because Ceph doesn't have a repository for Jammy yet, so to fix this, use ubuntu focal's ceph repository in order to ensure latest cephadm installschange jammy to focal /etc/apt/sources.list.d/ceph.list
-
-and than run apt update
-
-**sudo ./cephadm install**
-
-once the installation process is done, the following command will bootstrap the cluster to allow the cluster to run on the host
-
+## Setup Ceph webpanel
 **sudo cephadm bootstrap --mon-ip 172.16.0.1**
 
 once this completes, it will give you the user & password to loginThe URL will be partially incorrectthe correct URL will be https://PUBLIC_IP:8443/
@@ -62,9 +44,9 @@ once you get past that, click expand cluster and start adding hostThe host name 
 
 for the Network Address, we'll be using the internal vSwitch IP's which is a part of the 172.16.0.0/24 network. ceph will use that network to avoid data caps and bandwitdth overages 
 
-ensure that these labels are on all 3 hosts: mds, osd & rbd
+ensure that these labels are on all 3 hosts: _admin, mds, osd & rbd
 
-Ceph01 should have _admin & grafana along with the other tags
+Ceph01 should have _admin, grafana & rgw as it's tags
 
 wait for the status column to populate with information about the servers prior to moving on to the OSD phase to allow the other nodes to get setup 
 
@@ -72,22 +54,37 @@ at the OSD stage, set the drives you wish to be osd's as OSDs
 
 you also want to have DB Devices set to allow storing of metadata
 
-on the services page, create a MDS service with ID: mds, Placement should be Label and the label should be MDS. set the count to  the number of nodes being configured (in this case 3) and click create service and nextOnce you have reviewed everything to ensure its correct, click expand cluster
+on the services page, create a MDS service with ID: mds, Placement should be Label and the label should be MDS. set the count to  the number of nodes being configured (in this case 3) and click create service and next. 
+you are also going to want to create a rgw service with id: rgw and set the placement to labels and use the rgw label
+we can set the count to 1 as only 1 rgw will be configured
 
-Setup public connectivity to Ceph
-edit /etc/ceph/ceph.conf and add the following line in the [global] config
+once you have reviewed everything to ensure its correct, click expand cluster
 
-public_network = {65.21.88.21/32,157.90.36.20/32,65.21.124.126/32}
+## CREATE a Pool for data
+Using the menu below Cluster, create a pool to store data<br>
 
-once you have the public network in ceph's config, restart ceph using 
+type: Replicated<br>
+applicateions: rbd<br>
+compression mode: none<br>
+**Crush Rule:<br>**
+Name: RBD_CrushRule<br>
+Root: Default<br>
+Failure domain type: OSD<br>
+Device Class: SSD<br>
 
-reboot all 3 nodes once you have done this
+Once complete, create the pool
 
-CREATE a Pool for data
-Using the menu below Cluster, create a pool to store data
+## Setting up a RBD Image to expose
+under the Block menu, create an Image that uses the data pool that we set up before. 
+For size, we'll use 50GiB in this setup<br>
+as for features, we'll leave that default
 
-type: Replicated
+## Connecting to the RBD 
+connect the server to the vswitch and give it an ip address of 172.16.0.4<br>
+transfer /etc/ceph/ceph.client.admin.keyring to the server and put it in /etc/ceph (you'll probably need to make /etc/ceph)<br>
+copy /etc/ceph/ceph.conf to the connecting server<br>
 
-applicateions: rbd
+run the provided setup script on the server you're trying to connect to the RBD (the script will mount everything based on the guide below)
 
-compression mode: none
+good guide for mounting RBD's<br>
+http://www.sebastien-han.fr/blog/2013/11/22/map-slash-unmap-rbd-device-on-boot-slash-shutdown/
