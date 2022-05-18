@@ -35,7 +35,7 @@ execute the script provided on each server, the script will handle everything up
 ## Setup Ceph webpanel
 **sudo cephadm bootstrap --mon-ip 172.16.0.1**
 
-once this completes, it will give you the user & password to loginThe URL will be partially incorrectthe correct URL will be https://PUBLIC_IP:8443/
+once this completes, it will give you the user & password to login. The URL will be partially incorrect, the correct URL will be https://PUBLIC_IP:8443/
 
 ## Set up the Ceph cluster using the Web panel
 This is where we're going to log into the site https://PUBLIC_IP:8443/ once you first login, you'll notice that it asks you to change your password
