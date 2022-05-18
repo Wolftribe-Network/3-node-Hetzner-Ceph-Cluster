@@ -1,6 +1,6 @@
 # 3 Node Ceph Cluster using Hetzner dedicated root servers
 the 3 hetzner nodes should be in a vSwitch with eachother, the tag used in this setup is 4000
-
+any server that is connected to the servers should also be added to the vSwitch for accessibility to these nodes
 boot all 3 servers into Linux Rescue mode
 
 make sure all hard drives are wiped while you're in rescue mode or before you get into the ceph installation
