@@ -62,7 +62,8 @@ once you have reviewed everything to ensure its correct, click expand cluster
 
 ## CREATE a Pool for data
 Using the menu below Cluster, create a pool to store data<br>
-
+anything you update here, should also be updated in the scripts provided
+name: DATA
 type: Replicated<br>
 applicateions: rbd<br>
 compression mode: none<br>
@@ -76,6 +77,8 @@ Once complete, create the pool
 
 ## Setting up a RBD Image to expose
 under the Block menu, create an Image that uses the data pool that we set up before. 
+anything you update here, should also be updated in the Scripts provided
+Name: data
 For size, we'll use 50GiB in this setup<br>
 as for features, we'll leave that default
 
