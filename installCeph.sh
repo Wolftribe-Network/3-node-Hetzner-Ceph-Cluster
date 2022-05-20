@@ -30,6 +30,11 @@ if [ $HOSTNAME = "CEPH02" ]; then
     echo "      addresses: [172.16.0.2/24]" >> /etc/netplan/01-netcfg.yaml
 fi
 if [ $HOSTNAME = "CEPH03" ]; then
+apt-get install ca-certificates curl gnupg lsb-release
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt update
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 echo "  vlans:" >> /etc/netplan/01-netcfg.yaml
     echo "    vlan.4000:" >> /etc/netplan/01-netcfg.yaml
     echo "      id: 4000" >> /etc/netplan/01-netcfg.yaml
