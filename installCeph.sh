@@ -13,11 +13,11 @@ if [ $HOSTNAME = "CEPH01" ]; then
     echo "  vlans:" >> /etc/netplan/01-netcfg.yaml
     echo "    vlan.4000:" >> /etc/netplan/01-netcfg.yaml
     echo "      id: 4000" >> /etc/netplan/01-netcfg.yaml
-    echo "      link: eno1" >> /etc/netplan/01-netcfg.yaml
+    echo "      link: enp10s0" >> /etc/netplan/01-netcfg.yaml
     echo "      addresses: [172.16.0.1/24]" >> /etc/netplan/01-netcfg.yaml
     rm /root/cephadm
 fi
-if [ $HOSTNAME = "CEPH02" ] || [ $HOSTNAME = "CEPH03" ]; then
+if [ $HOSTNAME = "CEPH02" ]; then
     apt-get install ca-certificates curl gnupg lsb-release
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
@@ -26,12 +26,14 @@ if [ $HOSTNAME = "CEPH02" ] || [ $HOSTNAME = "CEPH03" ]; then
     echo "  vlans:" >> /etc/netplan/01-netcfg.yaml
     echo "    vlan.4000:" >> /etc/netplan/01-netcfg.yaml
     echo "      id: 4000" >> /etc/netplan/01-netcfg.yaml
-    echo "      link: enp1s0" >> /etc/netplan/01-netcfg.yaml
-fi
-if [ $HOSTNAME = "CEPH02" ]; then
+    echo "      link: enp10s0" >> /etc/netplan/01-netcfg.yaml
     echo "      addresses: [172.16.0.2/24]" >> /etc/netplan/01-netcfg.yaml
 fi
 if [ $HOSTNAME = "CEPH03" ]; then
+echo "  vlans:" >> /etc/netplan/01-netcfg.yaml
+    echo "    vlan.4000:" >> /etc/netplan/01-netcfg.yaml
+    echo "      id: 4000" >> /etc/netplan/01-netcfg.yaml
+    echo "      link: enp8s0" >> /etc/netplan/01-netcfg.yaml
     echo "      addresses: [172.16.0.3/24]" >> /etc/netplan/01-netcfg.yaml
 fi
 echo "172.16.0.1 CEPH01" >> /etc/hosts
