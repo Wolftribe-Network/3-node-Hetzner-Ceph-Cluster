@@ -1,6 +1,6 @@
 # 3 Node Ceph Cluster using Hetzner dedicated root servers
 the 3 hetzner nodes should be in a vSwitch with eachother, the tag used in this setup is 4000
-any server that is connected to the servers should also be added to the vSwitch for accessibility to these nodes
+
 boot all 3 servers into Linux Rescue mode
 
 make sure all hard drives are wiped while you're in rescue mode or before you get into the ceph installation
@@ -35,7 +35,7 @@ execute the script provided on each server, the script will handle everything up
 ## Setup Ceph webpanel
 **sudo cephadm bootstrap --mon-ip 172.16.0.1**
 
-once this completes, it will give you the user & password to login. The URL will be partially incorrect, the correct URL will be https://PUBLIC_IP:8443/
+once this completes, it will give you the user & password to loginThe URL will be partially incorrectthe correct URL will be https://PUBLIC_IP:8443/
 
 ## Set up the Ceph cluster using the Web panel
 This is where we're going to log into the site https://PUBLIC_IP:8443/ once you first login, you'll notice that it asks you to change your password
@@ -46,7 +46,7 @@ for the Network Address, we'll be using the internal vSwitch IP's which is a par
 
 ensure that these labels are on all 3 hosts: _admin, mds, osd & rbd
 
-Ceph01 should have _admin, grafana & rgw as it's tags
+Ceph01 should have _admin, grafana as it's tags
 
 wait for the status column to populate with information about the servers prior to moving on to the OSD phase to allow the other nodes to get setup 
 
@@ -62,8 +62,7 @@ once you have reviewed everything to ensure its correct, click expand cluster
 
 ## CREATE a Pool for data
 Using the menu below Cluster, create a pool to store data<br>
-anything you update here, should also be updated in the scripts provided
-name: DATA
+
 type: Replicated<br>
 applicateions: rbd<br>
 compression mode: none<br>
@@ -77,17 +76,26 @@ Once complete, create the pool
 
 ## Setting up a RBD Image to expose
 under the Block menu, create an Image that uses the data pool that we set up before. 
-anything you update here, should also be updated in the Scripts provided
-Name: data
 For size, we'll use 50GiB in this setup<br>
 as for features, we'll leave that default
 
-## Connecting to the RBD 
+## Connecting to the RBD
+an amazing guide for this: https://docs.ovh.com/gb/en/storage/ceph/use-your-cluster-with-rbd/<br>t
 connect the server to the vswitch and give it an ip address of 172.16.0.4<br>
 transfer /etc/ceph/ceph.client.admin.keyring to the server and put it in /etc/ceph (you'll probably need to make /etc/ceph)<br>
 copy /etc/ceph/ceph.conf to the connecting server<br>
 
 run the provided setup script on the server you're trying to connect to the RBD (the script will mount everything based on the guide below)
 
-good guide for mounting RBD's<br>
-http://www.sebastien-han.fr/blog/2013/11/22/map-slash-unmap-rbd-device-on-boot-slash-shutdown/
+sudo apt-get -y install ceph ceph-common<br>
+ run a config check<br>
+ this should show the rbd image: **rbd -n client.admin list mypool**<br>
+ you need to map the image<br>
+  sudo rbd -n client.myuser map mypool/myimage
+  than set up the filesystem<br>
+doing xfs or btrfs has taken days for me, so that's best to be left for production, use ext4 for your demo, as it'll take a few minutes at most<br>
+**mkfs.xfs /dev/rbd0**<br>
+time to mount the drive<br>
+**mkdir /data/**<br>
+**sudo mount /dev/rbd0 /data**<br>
+**df -h /data**
